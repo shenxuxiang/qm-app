@@ -14,13 +14,12 @@ abstract class BasePageState<T extends StatefulWidget> extends State<T> {
   BasePageState({this.author = true}) {
     if (author) {
       /// 通过 Token 来判断用户是否已经登录
-      Storage.getItem('User-Token').then((token) {
-        if (token?.isEmpty ?? true) {
-          if (GlobalVars.context.mounted) {
-            Navigator.of(GlobalVars.context).pushReplacementNamed('/login');
-          }
+      final token = Storage().getItem<String>('User-Token');
+      if (token?.isEmpty ?? true) {
+        if (GlobalVars.context!.mounted) {
+          History.replace('/login');
         }
-      });
+      }
     }
   }
 }
