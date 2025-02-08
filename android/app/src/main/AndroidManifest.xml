@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!--精确定位-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--粗略定位-->
+    <!--允许获取粗略位置，若用GPS实现定位小蓝点功能则必选-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--用于获取运营商信息，用于支持提供运营商信息相关的接口-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -19,9 +19,30 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--用于读取手机当前的状态-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <!-- 只能在支持BLE的Android设备上安装运行 -->
+    <!--    <uses-feature-->
+    <!--        android:name="android.hardware.bluetooth_le"-->
+    <!--        android:required="true" />-->
+    <!--    <uses-feature-->
+    <!--        android:name="android.bluetooth.le"-->
+    <!--        android:required="true" />-->
+    <!-- New Bluetooth permissions in Android 12
+    https://developer.android.com/about/versions/12/features/bluetooth-permissions -->
+
+    <!-- legacy for Android 11 or lower -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+
 
     <application
-        android:label="qm"
+        android:label="阡陌农机"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

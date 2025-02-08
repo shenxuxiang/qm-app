@@ -43,7 +43,7 @@ android {
             storePassword 'android'
         }
 
-        release {//发布版本的签名配置
+        release { // 发布版本的签名配置
             storeFile file('../release.keystore')
             keyAlias "androidreleasekey"
             storePassword "android"
@@ -63,8 +63,10 @@ android {
     }
 
     dependencies {
-        implementation('com.amap.api:location:5.6.1')
-        implementation('com.amap.api:3dmap:8.1.0')
+        // implementation('com.amap.api:location:5.6.1')
+        // implementation('com.amap.api:3dmap:8.1.0')
+        implementation 'com.amap.api:3dmap-location-search:10.0.800_loc6.4.5_sea9.7.2'
+        implementation 'androidx.annotation:annotation:1.8.1'
     }
 }
 

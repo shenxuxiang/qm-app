@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'custom_title.dart';
 import 'input_widget.dart';
+import 'package:get/get.dart';
+import 'package:qm/global_vars.dart';
 import 'package:qm/models/main.dart';
 import 'package:qm/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:qm/api/main.dart' as api;
 import 'package:qm/components/qm_checkbox.dart';
 import 'package:qm/components/button_widget.dart';
@@ -18,20 +20,23 @@ class TabOne extends StatefulWidget {
 }
 
 class _TabOneState extends State<TabOne> {
-  int? _countdown;
   String _phone = '';
-  Stream<int>? _timer;
   bool _checked = false;
   bool _disabled = true;
   String _verificationCode = '';
 
   @override
   void initState() {
+    _phone = Get.find<Storage>().getItem('User-Phone') ?? '';
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void handleChangePhone(String value) {
-    debugPrint('${GlobalVars.phonePattern}, ${GlobalVars.phonePattern.hasMatch(value)}');
     setState(() {
       _phone = value;
       _disabled = !(GlobalVars.phonePattern.hasMatch(value) && _verificationCode.length >= 6);
@@ -54,22 +59,23 @@ class _TabOneState extends State<TabOne> {
     }
 
     try {
+      final storage = Get.find<Storage>();
       final res = await api.queryUserLoginPhoneCode({'phone': _phone, 'code': _verificationCode});
       // 将用户 token 保存在本地
-      await Storage.setItem('User-Token', res.data['token']);
+      await storage.setItem('User-Token', res.data['token']);
       // 获取用户信息
       final userInfo = (await api.queryUserInfo()).data;
       // 将用户信息保存在本地
-      await Storage.setItem('User-Info', userInfo);
+      await storage.setItem('User-Info', userInfo);
+      // 将用户登录的手机号保存在本地
+      await storage.setItem('User-Phone', _phone);
+      Get.find<MainModels>().setUserInfo(userInfo);
 
-      if (GlobalVars.context.mounted) {
-        GlobalVars.context.read<MainModels>().setUserInfo(userInfo);
-
-        /// 登录成功后，立即返回到 APP 首页
-        Navigator.of(GlobalVars.context).pushReplacementNamed('/');
-      }
-    } on DioException catch (err) {
-      debugPrint('error: $err');
+      /// 登录成功后，立即返回到 APP 首页
+      Get.offAllNamed('/');
+    } catch (error, stack) {
+      debugPrint('error: $error');
+      debugPrint('stack: $stack');
     }
   }
 
@@ -79,7 +85,6 @@ class _TabOneState extends State<TabOne> {
       Toast.show('请输入手机号码');
       throw Exception('手机号不能为空');
     }
-
     return api.queryVerificationCode({'type': '1', 'phone': _phone});
   }
 
@@ -106,6 +111,7 @@ class _TabOneState extends State<TabOne> {
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.next,
           onChanged: handleChangeVerificationCode,
+          autofillHints: [AutofillHints.oneTimeCode],
           // 获取验证码按钮
           suffix: VerificationCodeButton(sendRequest: handleSendVerificationCode),
         ),

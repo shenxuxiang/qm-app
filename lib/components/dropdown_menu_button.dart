@@ -1,65 +1,73 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:flutter/material.dart';
 
-typedef DropdownMenuBuilder<T> = Widget Function(T menu);
-
-class DropdownMenu<T> extends StatefulWidget {
+class DropdownMenuButton<T> extends StatefulWidget {
   final Widget child;
-  final List<T> menus;
+  final int itemCount;
   final double maxWidth;
   final double maxHeight;
   final double menuItemHeight;
-  final Function(T menu) onSelected;
-  final DropdownMenuBuilder<T> buildMenuItem;
+  final Color dropdownBackground;
+  final EdgeInsets dropdownPadding;
+  final PopupMenuEntry<T> Function(BuildContext context, int index) itemBuilder;
 
-  const DropdownMenu({
+  const DropdownMenuButton({
     super.key,
-    required this.menus,
     required this.child,
     this.maxWidth = 260,
     this.maxHeight = 300,
-    required this.onSelected,
+    required this.itemCount,
     this.menuItemHeight = 40,
-    required this.buildMenuItem,
+    required this.itemBuilder,
+    this.dropdownBackground = Colors.white,
+    this.dropdownPadding = const EdgeInsets.symmetric(vertical: 10),
   });
 
   @override
-  State<DropdownMenu> createState() => _DropdownMenuState();
+  State<DropdownMenuButton> createState() => _DropdownMenuButtonState();
 }
 
-class _DropdownMenuState extends State<DropdownMenu> {
+class _DropdownMenuButtonState<T> extends State<DropdownMenuButton<T>> {
   void _handleShowDropdown(BuildContext context) {
     final renderBox = context.findRenderObject()! as RenderBox;
     final ancestorBox = Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
     final offset = renderBox.localToGlobal(Offset.zero, ancestor: ancestorBox);
     final width = renderBox.size.width;
     final height = renderBox.size.height;
+
     RelativeRect position = RelativeRect.fromRect(
       Rect.fromLTWH(offset.dx, offset.dy + height, width, height),
       Offset.zero & ancestorBox.size,
     );
 
-    double dropdownHeight = math.min(widget.maxHeight, widget.menus.length * widget.menuItemHeight);
+    double dropdownHeight = math.min(widget.maxHeight, widget.itemCount * widget.menuItemHeight);
     if (offset.dy + dropdownHeight + 20 > ancestorBox.size.height) {
       position = RelativeRect.fromLTRB(
         offset.dx,
-        offset.dy + dropdownHeight + 10,
+        offset.dy - 10 - dropdownHeight,
         ancestorBox.size.width,
-        offset.dy + 10,
+        offset.dy - 10,
       );
     }
+
+    List<PopupMenuEntry> items = [];
+    for (int i = 0; i < widget.itemCount; i++) {
+      items.add(widget.itemBuilder(context, i));
+    }
+
     showMenu(
+      items: items,
+      elevation: 5,
       context: context,
       position: position,
-      items: [
-        for (final menu in widget.menus)
-          PopupMenuItem(
-            value: menu,
-            height: widget.menuItemHeight,
-            onTap: () => widget.onSelected(menu),
-            child: widget.buildMenuItem(menu),
-          ),
-      ],
+      clipBehavior: Clip.hardEdge,
+      color: widget.dropdownBackground,
+      menuPadding: widget.dropdownPadding,
+      constraints: BoxConstraints(maxHeight: widget.maxHeight, maxWidth: widget.maxWidth),
+      popUpAnimationStyle: AnimationStyle(
+        duration: Duration(milliseconds: 200),
+        reverseDuration: Duration(milliseconds: 150),
+      ),
     );
   }
 

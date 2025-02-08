@@ -14,12 +14,6 @@ class StickyPositioned extends MultiChildRenderObjectWidget {
     final scrollPosition = Scrollable.of(context).position;
     return _RenderStickyPositioned(scrollPosition: scrollPosition);
   }
-//
-// @override
-// void updateRenderObject(BuildContext context, covariant RenderObject renderObject) {
-//
-//   super.updateRenderObject(context, renderObject);
-// }
 }
 
 class _RenderStickyPositioned extends RenderBox

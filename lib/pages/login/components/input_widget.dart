@@ -13,15 +13,22 @@ class InputWidget extends StatefulWidget {
   final TextInputAction? textInputAction;
   final void Function(String value) onChanged;
 
+  // final SmartQuotesType? smartQuotesType;
+  // final SmartDashesType? smartDashesType;
+  final List<String>? autofillHints;
+
   const InputWidget({
     super.key,
     this.prefix,
     this.suffix,
     this.placeholder,
     required this.value,
+    // this.smartQuotesType,
+    // this.smartDashesType,
     required this.onChanged,
     this.maxLength = 9999999,
     this.obscureText = false,
+    this.autofillHints = const <String>[],
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
   });
@@ -86,6 +93,7 @@ class _InputWidgetState extends State<InputWidget> {
               maxLength: widget.maxLength,
               obscureText: widget.obscureText,
               keyboardType: widget.keyboardType,
+              autofillHints: widget.autofillHints,
               textInputAction: widget.textInputAction,
               textAlignVertical: TextAlignVertical.center,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -94,6 +102,7 @@ class _InputWidgetState extends State<InputWidget> {
                 height: 1,
                 fontSize: _fontSize,
                 color: Colors.black,
+                letterSpacing: widget.obscureText ? 10 : 0.5,
               ),
               decoration: InputDecoration(
                 hintMaxLines: 1,
@@ -103,7 +112,7 @@ class _InputWidgetState extends State<InputWidget> {
                 border: InputBorder.none,
                 hintText: widget.placeholder,
                 contentPadding: _contentPadding,
-                hintStyle: TextStyle(color: Colors.black26),
+                hintStyle: TextStyle(color: Colors.black26, letterSpacing: 0.5),
               ),
             ),
           ),

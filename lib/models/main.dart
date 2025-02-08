@@ -1,34 +1,40 @@
-import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart';
+import 'package:get/get.dart';
+import 'package:qm/entity/work_type.dart';
+import 'package:qm/entity/crops_type.dart';
 
-class MainModels extends ChangeNotifier {
-  MainModels(BuildContext context) {
-    /// 用户在登录时已经在用户信息保存在了本地。
-    Storage.getItem<Map<String, dynamic>>('User-Info').then((data) {
-      _userInfo = data!;
-      notifyListeners();
-    });
-  }
-
+class MainModels extends GetxController {
   /// 用户信息
-  ///
-  /// 全局只有这一个地方可以获取用户信息。
-  Map<String, dynamic>? _userInfo;
-
-  Map<String, dynamic>? get userInfo => _userInfo;
+  final userInfo = <String, dynamic>{}.obs;
 
   void setUserInfo(Map<String, dynamic>? value) {
-    _userInfo = value;
-    notifyListeners();
+    userInfo.value = value ?? {};
   }
 
   /// 服务主体
-  List<dynamic> _systemOrganization = [];
-
-  List<dynamic> get systemOrganization => _systemOrganization;
+  final systemOrganization = <dynamic>[].obs;
 
   void setSystemOrganization(List<dynamic> newValue) {
-    _systemOrganization = newValue;
-    notifyListeners();
+    systemOrganization.value = newValue;
+  }
+
+  /// 农作物类型列表
+  final cropsTypeList = <CropsType>[].obs;
+
+  void setCropsTypeList(List<CropsType> newValue) {
+    cropsTypeList.value = newValue;
+  }
+
+  /// 作业物类型列表
+  final workTypeList = <WorkType>[].obs;
+
+  void setWorkTypeList(List<WorkType> newValue) {
+    workTypeList.value = newValue;
+  }
+
+  /// 省市区
+  final regionList = <dynamic>[].obs;
+
+  void setRegionList(List<dynamic> newValue) {
+    regionList.value = newValue;
   }
 }

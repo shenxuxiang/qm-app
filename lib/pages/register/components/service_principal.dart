@@ -1,16 +1,15 @@
-import 'package:qm/utils/index.dart';
+import 'package:get/get.dart';
 import 'package:qm/models/main.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:qm/api/main.dart' as api;
-import 'package:qm/entity/organization.dart';
-import 'service_principal_modal_widget.dart';
+import 'package:qm/utils/index.dart' as utils;
+import 'package:qm/components/cascader/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ServicePrincipal extends StatefulWidget {
   final String title;
-  final Organization? value;
-  final void Function(Organization value) onChanged;
+  final SelectedTreeNode? value;
+  final void Function(SelectedTreeNode value) onChanged;
 
   const ServicePrincipal({super.key, required this.title, required this.onChanged, this.value});
 
@@ -21,7 +20,7 @@ class ServicePrincipal extends StatefulWidget {
 class _ServicePrincipalState extends State<ServicePrincipal> {
   /// 用户点击，打开 Sheet 弹框
   onTap(BuildContext context) async {
-    MainModels mainModels = context.read<MainModels>();
+    final mainModels = Get.find<MainModels>();
 
     /// 如果服务主体为空，则发送请求获取服务主体
     if (mainModels.systemOrganization.isEmpty) {
@@ -30,29 +29,27 @@ class _ServicePrincipalState extends State<ServicePrincipal> {
         mainModels.setSystemOrganization(response.data);
 
         if (context.mounted) {
-          handleOpenModal(context, mainModels.systemOrganization);
+          handleOpenModal(mainModels.systemOrganization);
         }
-      } on DioException {}
+      } on utils.DioException {}
     } else {
-      handleOpenModal(context, mainModels.systemOrganization);
+      handleOpenModal(mainModels.systemOrganization);
     }
   }
 
-  handleConfirm(VoidCallback onClosed) {
-    return (List<Organization> value) {
-      widget.onChanged(value.last);
-      onClosed();
-    };
-  }
-
-  handleOpenModal(BuildContext context, List<dynamic> organizationList) {
-    showSheet(
+  handleOpenModal(List<dynamic> organizationList) {
+    utils.BottomSheet.show(
       height: 600.w,
-      context: context,
-      builder: (BuildContext ctx, {required VoidCallback onClosed, Widget? child}) {
-        return ServicePrincipalModalWidget(
-          onConfirm: handleConfirm(onClosed),
-          organizationList: organizationList,
+      builder: (BuildContext context, {Widget? child, required VoidCallback onClose}) {
+        return CasCadeWidget(
+          valueKey: 'organizationId',
+          placeholder: '请选择服务主体',
+          labelKey: 'organizationName',
+          sourceList: organizationList,
+          onConfirm: (List<SelectedTreeNode> value) {
+            widget.onChanged(value.last);
+            onClose();
+          },
         );
       },
     );
@@ -93,7 +90,7 @@ class _ServicePrincipalState extends State<ServicePrincipal> {
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
-                      widget.value?.organizationName ?? '请选择服务主体',
+                      widget.value?.label ?? '请选择服务主体',
                       style: TextStyle(
                         height: 1,
                         fontSize: 13.sp,
@@ -102,7 +99,7 @@ class _ServicePrincipalState extends State<ServicePrincipal> {
                     ),
                   ),
                   SizedBox(width: 10),
-                  Icon(QmIcons.right, size: 18.w, color: Colors.black45),
+                  Icon(utils.QmIcons.right, size: 18.w, color: Colors.black45),
                 ],
               ),
             ),

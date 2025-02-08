@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 /// 全局变量
 class GlobalVars {
-  /// 添加一个全局可访问的构建上下文
-  static late BuildContext context;
+  /// 获取 BuildContext
+  static BuildContext? context;
 
   /// 用户密码验证规则
   /// 必须包含数字、字母、以及特殊符号【. , ? _ ` ! @ # $ % ^ & * \ - = + ( ) [ ] { }】

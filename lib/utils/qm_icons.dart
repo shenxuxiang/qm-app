@@ -40,6 +40,8 @@ class QmIcons {
 
   static IconData book = _generate(0xe7e9);
 
+  static IconData empty = _generate(0xe6a6);
+
   static IconData homeFill = _generate(0xe660);
 
   static IconData mineFill = _generate(0xe65b);

@@ -126,11 +126,11 @@ class _QmInputState extends State<QmInput> {
                     child: Opacity(
                       opacity: widget.value.isNotEmpty ? 1 : 0,
                       child: Container(
-                        width: 18.w,
-                        height: 18.w,
+                        width: 16.w,
+                        height: 16.w,
                         decoration: BoxDecoration(
                           color: Color(0xFFCCCCCC),
-                          borderRadius: BorderRadius.circular(10.w),
+                          borderRadius: BorderRadius.circular(8.w),
                         ),
                         alignment: Alignment.center,
                         child: Icon(QmIcons.close2, size: 16.w, color: Colors.white),

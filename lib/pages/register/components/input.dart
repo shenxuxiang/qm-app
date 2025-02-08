@@ -92,7 +92,7 @@ class _InputState extends State<Input> {
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(left: 0, right: 0, top: 16.w, bottom: 12.w),
                     hintStyle: TextStyle(
-                        color: Colors.black38, letterSpacing: 0.5, fontSize: 13.sp, height: 1),
+                        color: Colors.black38, letterSpacing: 0.5, fontSize: 13.w, height: 1),
                     hintText: widget.placeholder,
                     border: InputBorder.none,
                     isCollapsed: true,

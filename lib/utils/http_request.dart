@@ -1,12 +1,13 @@
 library;
 
 import 'dart:io';
+import 'package:get/get.dart' show Get, GetNavigation;
+
+import 'toast.dart';
+import 'storage.dart';
 import 'package:dio/io.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:qm/utils/global_context.dart';
-import 'package:qm/utils/toast.dart';
-import 'package:qm/utils/storage.dart';
 import 'package:qm/entity/response_data.dart';
 
 /// 获取本地存储的信息
@@ -27,6 +28,15 @@ const _errorMessage = {
 void _abortRequest() {
   _cancelToken.cancel('Http Request Is Canceled');
   _cancelToken = CancelToken();
+}
+
+/// 跳转到登录页
+void _gotoLogin() {
+  String routeName = Get.currentRoute;
+
+  if (routeName != '/login' && routeName != '/register') {
+    Get.offAllNamed('/login');
+  }
 }
 
 /// 根据 HTTP 请求状态码返回对应的错误信息
@@ -54,7 +64,7 @@ class _Interceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     options.cancelToken = _cancelToken;
-    options.headers = {'Authorization': 'Bearer ${await Storage.getItem('User-Token')}'};
+    options.headers = {'Authorization': 'Bearer ${Storage().getItem('User-Token')}'};
     handler.next(options);
   }
 
@@ -65,27 +75,18 @@ class _Interceptor extends Interceptor {
     if (data.code == 0) {
       handler.resolve(Response<ResponseData>(
         data: data,
-        requestOptions: response.requestOptions,
         statusCode: response.statusCode,
         statusMessage: response.statusMessage,
+        requestOptions: response.requestOptions,
       ));
     } else {
       String message = data.message != '' ? data.message : '未知异常';
       if (data.code == 401) {
+        message = '登录失效';
+
         /// 取消 HTTP 请求
         _abortRequest();
-        message = '用户无权限～';
-        String? routeName = ModalRoute.of(GlobalVars.context)?.settings.name;
-        if (routeName != '/login' && routeName != '/register') {
-          Future.delayed(
-            const Duration(milliseconds: 1500),
-            () {
-              if (GlobalVars.context.mounted) {
-                Navigator.of(GlobalVars.context).pushReplacementNamed('/login');
-              }
-            },
-          );
-        }
+        _gotoLogin();
       }
 
       handler.reject(DioException(
@@ -101,8 +102,14 @@ class _Interceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     String message = '';
+
+    /// 添加 status code 401 的判断
     if (err.type == DioExceptionType.badResponse) {
       message = _getErrorStatusMessage(err.response!.statusCode!);
+      if (err.response!.statusCode! == 401) {
+        message = '登录失效';
+        _gotoLogin();
+      }
     } else {
       message = _errorMessage[err.type]!;
     }

@@ -1,12 +1,14 @@
+import 'package:get/get.dart';
 import 'components/input.dart';
-import 'package:qm/common/base.dart';
+import 'package:qm/global_vars.dart';
 import 'package:qm/utils/index.dart';
 import 'package:flutter/material.dart';
 import 'package:qm/api/main.dart' as api;
+import 'package:qm/common/base_page.dart';
 import 'components/service_principal.dart';
-import 'package:qm/entity/organization.dart';
 import 'package:qm/components/qm_checkbox.dart';
 import 'package:qm/components/button_widget.dart';
+import 'package:qm/components/cascader/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qm/components/verification_code_button.dart';
 
@@ -24,7 +26,7 @@ class _RegisterPageState extends BasePageState<RegisterPage> {
   String _realName = '';
   bool _checked = false;
   String _verificationCode = '';
-  Organization? _servicePrincipal;
+  SelectedTreeNode? _servicePrincipal;
 
   _RegisterPageState({super.author = false});
 
@@ -34,8 +36,8 @@ class _RegisterPageState extends BasePageState<RegisterPage> {
   }
 
   /// 返回上一页
-  handleGoBack(BuildContext context) {
-    Navigator.of(context).pop();
+  handleGoBack() {
+    Get.back();
   }
 
   /// 修改手机号
@@ -99,11 +101,9 @@ class _RegisterPageState extends BasePageState<RegisterPage> {
         'realName': _realName,
         'idNumber': _idNumber,
         'code': _verificationCode,
-        'organizationId': _servicePrincipal!.organizationId,
+        'organizationId': _servicePrincipal!.value,
       });
-      if (GlobalVars.context.mounted) {
-        Navigator.of(GlobalVars.context).pop(_phone);
-      }
+      Get.back(result: _phone);
     } on DioException catch (err) {
       debugPrint('error: $err');
     }
@@ -122,15 +122,10 @@ class _RegisterPageState extends BasePageState<RegisterPage> {
         child: Column(
           children: [
             AppBar(
-              centerTitle: true,
+              elevation: 0,
               title: Text(widget.title),
               backgroundColor: Colors.transparent,
-              iconTheme: IconThemeData(color: Colors.white, size: 22.sp),
-              titleTextStyle: TextStyle(color: Colors.white, fontSize: 18.sp),
-              leading: GestureDetector(
-                onTap: () => handleGoBack(context),
-                child: Icon(QmIcons.back),
-              ),
+              leading: GestureDetector(onTap: handleGoBack, child: Icon(QmIcons.back)),
             ),
             SizedBox(height: 20.w),
             Expanded(
@@ -180,8 +175,9 @@ class _RegisterPageState extends BasePageState<RegisterPage> {
                         ServicePrincipal(
                           title: '服务主体',
                           value: _servicePrincipal,
-                          onChanged: (Organization value) =>
-                              setState(() => _servicePrincipal = value),
+                          onChanged: (SelectedTreeNode value) {
+                            setState(() => _servicePrincipal = value);
+                          },
                         ),
                         Input(
                           title: '验证码',
@@ -219,10 +215,7 @@ class _RegisterPageState extends BasePageState<RegisterPage> {
                           ],
                         ),
                         SizedBox(height: 30.w),
-                        ButtonWidget(
-                          onPressed: handleSubmit,
-                          text: '注册',
-                        ),
+                        ButtonWidget(onPressed: handleSubmit, text: '注册'),
                         SizedBox(height: 10.w),
                       ],
                     ),

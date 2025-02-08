@@ -12,8 +12,7 @@ ResponseData _$ResponseDataFromJson(Map<String, dynamic> json) => ResponseData(
       data: json['data'],
     );
 
-Map<String, dynamic> _$ResponseDataToJson(ResponseData instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ResponseDataToJson(ResponseData instance) => <String, dynamic>{
       'code': instance.code,
       'message': instance.message,
       'data': instance.data,

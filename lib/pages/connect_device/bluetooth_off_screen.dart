@@ -1,30 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-// import '../utils/snackbar.dart';
-
 class BluetoothOffScreen extends StatelessWidget {
-  const BluetoothOffScreen({super.key, this.adapterState});
-
-  final BluetoothAdapterState? adapterState;
-
-  Widget buildBluetoothOffIcon(BuildContext context) {
-    return const Icon(
-      Icons.bluetooth_disabled,
-      size: 200.0,
-      color: Colors.white54,
-    );
-  }
-
-  Widget buildTitle(BuildContext context) {
-    String? state = adapterState?.toString().split(".").last;
-    return Text(
-      'Bluetooth Adapter is ${state ?? 'not available'}',
-      style: Theme.of(context).primaryTextTheme.titleSmall?.copyWith(color: Colors.white),
-    );
-  }
+  const BluetoothOffScreen({super.key});
 
   Widget buildTurnOnButton(BuildContext context) {
     return Padding(
@@ -36,9 +15,9 @@ class BluetoothOffScreen extends StatelessWidget {
             if (Platform.isAndroid) {
               await FlutterBluePlus.turnOn();
             }
-          } catch (e) {
-            // Snackbar.show(ABC.a, prettyException("Error Turning On:", e), success: false);
-            debugPrint('error: $e');
+          } catch (err, stack) {
+            debugPrint('$err');
+            debugPrint('$stack');
           }
         },
       ),
@@ -48,15 +27,21 @@ class BluetoothOffScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
-      // key: Snackbar.snackBarKeyA,
       child: Scaffold(
         backgroundColor: Colors.lightBlue,
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              buildBluetoothOffIcon(context),
-              buildTitle(context),
+              Icon(
+                size: 200.0,
+                color: Colors.white54,
+                Icons.bluetooth_disabled,
+              ),
+              Text(
+                'Bluetooth Adapter is not available',
+                style: Theme.of(context).primaryTextTheme.titleSmall?.copyWith(color: Colors.white),
+              ),
               if (Platform.isAndroid) buildTurnOnButton(context),
             ],
           ),
