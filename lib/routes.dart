@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
-import 'package:qm/models/main.dart';
-import 'package:qm/utils/index.dart' as utils;
-import 'package:qm/pages/home.dart' show HomePage;
-import 'package:qm/models/connect_device_models.dart';
-import 'package:qm/pages/login/index.dart' show LoginPage;
-import 'package:qm/pages/work_type.dart' show WorkTypePage;
-import 'package:qm/pages/work_detail.dart' show WorkDetail;
-import 'package:qm/pages/register/index.dart' show RegisterPage;
-import 'package:qm/pages/update_records.dart' show UpdateRecords;
-import 'package:qm/pages/connect_device/index.dart' show ConnectDevice;
+import 'package:qmnj/models/main.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/pages/home.dart' show HomePage;
+import 'package:qmnj/models/connect_device_models.dart';
+import 'package:qmnj/pages/login/index.dart' show LoginPage;
+import 'package:qmnj/pages/work_type.dart' show WorkTypePage;
+import 'package:qmnj/pages/work_detail.dart' show WorkDetail;
+import 'package:qmnj/pages/register/index.dart' show RegisterPage;
+import 'package:qmnj/pages/update_records.dart' show UpdateRecords;
+import 'package:qmnj/pages/connect_device/index.dart' show ConnectDevice;
 
 /// 全局依赖注入
 class GlobalDependenceBinding implements Bindings {

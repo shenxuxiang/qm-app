@@ -1,7 +1,7 @@
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart' as utils;
+import 'package:qmnj/utils/index.dart' as utils;
 
 abstract class BasePage extends StatefulWidget {
   final String title;

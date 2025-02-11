@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
 import 'package:amap_map/amap_map.dart';
-import 'package:qm/api/main.dart' as api;
+import 'package:qmnj/api/main.dart' as api;
 import 'package:x_amap_base/x_amap_base.dart';
-import 'package:qm/entity/location_info.dart';
-import 'package:qm/entity/driver_work_params.dart';
-import 'package:qm/models/connect_device_models.dart';
+import 'package:qmnj/entity/location_info.dart';
+import 'package:qmnj/entity/driver_work_params.dart';
+import 'package:qmnj/models/connect_device_models.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -55,6 +55,9 @@ class _TabHomeState extends State<TabHome> {
 
   /// 地图控制器
   AMapController? _mapController;
+
+  /// 作业里程数（米）
+  double _driverWorkMeter = 0;
 
   /// 获取用户的当前位置
   Future<void> getUserLocation() async {
@@ -104,6 +107,9 @@ class _TabHomeState extends State<TabHome> {
       LatLng point = LatLng(locationInfo.latitude, locationInfo.longitude);
       List<LatLng> points = _polyLineMaps.isNotEmpty ? List.of(_polyLineMaps.first.points) : [];
 
+      /// 计算两个点之间的距离
+      final distance = points.isEmpty ? 0 : AMapTools.distanceBetween(points.last, point);
+
       /// 更新用户轨迹线
       points.add(point);
 
@@ -131,6 +137,8 @@ class _TabHomeState extends State<TabHome> {
 
         /// 实时更新用户位置
         _mapController?.moveCamera(CameraUpdate.newLatLng(point));
+
+        _driverWorkMeter += distance;
       });
     });
   }
@@ -153,9 +161,11 @@ class _TabHomeState extends State<TabHome> {
         _markerMaps.clear();
         // 取消所有 Polyline
         _polyLineMaps.clear();
+        // 作业里程数
+        _driverWorkMeter = 0;
+        _unListenUserLocation = null;
         // 隐藏定位蓝点
         _myLocationStyleOptions = MyLocationStyleOptions(false);
-        _unListenUserLocation = null;
       });
       Toast.show('作业已停止');
 
@@ -282,6 +292,47 @@ class _TabHomeState extends State<TabHome> {
               myLocationStyleOptions: _myLocationStyleOptions,
             ),
           ),
+
+          /// 展示作业里程
+          _unListenUserLocation == null
+              ? SizedBox(width: 0, height: 0)
+              : Positioned(
+                  top: 50.w,
+                  child: Container(
+                    width: 260.w,
+                    padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6.w),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '作业里程（公里）',
+                          style: TextStyle(
+                            height: 1.5,
+                            fontSize: 14.w,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        Text(
+                          (_driverWorkMeter / 1000).toStringAsFixed(3),
+                          style: TextStyle(
+                            height: 1.5,
+                            fontSize: 24.w,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+          /// 作业开始/结束开关
           Positioned(
             bottom: 20,
             width: 90,
@@ -315,9 +366,7 @@ class _TabHomeState extends State<TabHome> {
                   );
                 },
               ),
-              onPressed: () {
-                handleTapStartOrEndButton(context);
-              },
+              onPressed: () => handleTapStartOrEndButton(context),
               child: const Placeholder(),
             ),
           ),

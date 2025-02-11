@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'request_permission.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/common/amap_config.dart';
-import 'package:qm/entity/location_info.dart';
+import 'package:qmnj/common/amap_config.dart';
+import 'package:qmnj/entity/location_info.dart';
 import 'package:amap_flutter_location/amap_location_option.dart';
 import 'package:amap_flutter_location/amap_flutter_location.dart';
 
@@ -33,7 +33,7 @@ class UserLocation {
       /// <b>必须保证在调用定位功能之前调用, 建议首次启动App时弹出《隐私政策》并取得用户同意</b><br>
       /// [hasAgree] 隐私权政策是否已经取得用户同意<br>
       AMapFlutterLocation.updatePrivacyAgree(true);
-      // AMapFlutterLocation.setApiKey(_androidKey!, _iosKey!);
+      AMapFlutterLocation.setApiKey(_androidKey!, _iosKey!);
       _hasPermission = await requestLocationPermission();
       return _hasPermission;
     } catch (err, stack) {

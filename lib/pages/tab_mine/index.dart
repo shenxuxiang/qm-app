@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:qm/models/main.dart';
+import 'package:qmnj/models/main.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/utils/index.dart' as utils;
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/utils/index.dart' as utils;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TabMine extends StatefulWidget {

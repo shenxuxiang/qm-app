@@ -1,12 +1,12 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:qm/common/amap_config.dart';
+import 'package:qmnj/common/amap_config.dart';
 import 'package:flutter/rendering.dart';
 import 'package:amap_map/amap_map.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart';
-import 'package:qm/global_vars.dart';
-import 'package:qm/routes.dart';
+import 'package:qmnj/utils/index.dart';
+import 'package:qmnj/global_vars.dart';
+import 'package:qmnj/routes.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 

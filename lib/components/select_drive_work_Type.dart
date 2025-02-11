@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:qm/models/main.dart';
+import 'package:qmnj/models/main.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/entity/work_type.dart';
-import 'package:qm/entity/crops_type.dart';
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/entity/work_type.dart';
+import 'package:qmnj/entity/crops_type.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget _renderMenuItem<T>({

@@ -1,12 +1,10 @@
-import 'package:flutter/scheduler.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/common/base_page.dart';
-import 'package:qm/utils/index.dart' as utils;
-import 'package:qm/pages/tab_home/index.dart';
-import 'package:qm/pages/tab_work/index.dart';
-import 'package:qm/pages/tab_mine/index.dart';
-import 'package:qm/components/keep_alive.dart';
+import 'package:qmnj/common/base_page.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/pages/tab_home/index.dart';
+import 'package:qmnj/pages/tab_work/index.dart';
+import 'package:qmnj/pages/tab_mine/index.dart';
+import 'package:qmnj/components/keep_alive.dart';
 
 class HomePage extends BasePage {
   const HomePage({super.key, super.title});

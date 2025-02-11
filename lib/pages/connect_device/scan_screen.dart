@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'render_device_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart' as utils;
-import 'package:qm/models/connect_device_models.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/models/connect_device_models.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

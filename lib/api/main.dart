@@ -1,5 +1,5 @@
-import 'package:qm/utils/index.dart';
-import 'package:qm/entity/response_data.dart';
+import 'package:qmnj/utils/index.dart';
+import 'package:qmnj/entity/response_data.dart';
 
 Future<ResponseData> queryVerificationCode(Map<String, dynamic>? query) async {
   return httpRequest.post('/v1.0/sms/send', data: query);

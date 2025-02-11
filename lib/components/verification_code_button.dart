@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,6 +16,7 @@ class VerificationCodeButton extends StatefulWidget {
 class _VerificationCodeButtonState extends State<VerificationCodeButton> {
   Stream<int>? _stream;
   int? _countdown;
+  StreamSubscription<int>? _streamSubscription;
 
   /// 开始计时
   void startTiming() async {
@@ -28,7 +29,7 @@ class _VerificationCodeButtonState extends State<VerificationCodeButton> {
       setState(() => _countdown = 59);
 
       _stream = Stream.periodic(const Duration(seconds: 1), (int count) => count).take(60);
-      _stream!.listen(
+      _streamSubscription = _stream!.listen(
         (int count) {
           setState(() {
             _countdown = 59 - count - 1;
@@ -40,10 +41,17 @@ class _VerificationCodeButtonState extends State<VerificationCodeButton> {
             _countdown = null;
           });
         },
+        cancelOnError: true,
       );
     } catch (err) {
       debugPrint('error: $err');
     }
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
   }
 
   @override

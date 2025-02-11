@@ -1,4 +1,4 @@
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
 
 button({required String text, required void Function() onPressed, bool isActive = false}) {

@@ -1,14 +1,12 @@
 library;
 
 import 'dart:io';
-import 'package:get/get.dart' show Get, GetNavigation;
-
 import 'toast.dart';
 import 'storage.dart';
 import 'package:dio/io.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:qm/entity/response_data.dart';
+import 'package:qmnj/entity/response_data.dart';
+import 'package:get/get.dart' show Get, GetNavigation;
 
 /// 获取本地存储的信息
 CancelToken _cancelToken = CancelToken();

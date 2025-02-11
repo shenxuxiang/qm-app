@@ -1,13 +1,13 @@
 import 'custom_title.dart';
 import 'input_widget.dart';
 import 'package:get/get.dart';
-import 'package:qm/global_vars.dart';
-import 'package:qm/models/main.dart';
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/global_vars.dart';
+import 'package:qmnj/models/main.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/components/qm_checkbox.dart';
-import 'package:qm/components/button_widget.dart';
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/components/qm_checkbox.dart';
+import 'package:qmnj/components/button_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TabTwo extends StatefulWidget {

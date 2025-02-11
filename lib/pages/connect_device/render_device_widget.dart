@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/components/button_widget.dart';
-import 'package:qm/models/connect_device_models.dart';
+import 'package:qmnj/components/button_widget.dart';
+import 'package:qmnj/models/connect_device_models.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

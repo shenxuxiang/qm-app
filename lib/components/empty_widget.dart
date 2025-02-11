@@ -1,5 +1,5 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:qm/utils/index.dart' as utils;
+import 'package:qmnj/utils/index.dart' as utils;
 import 'package:flutter/material.dart';
 
 class EmptyWidget extends StatelessWidget {

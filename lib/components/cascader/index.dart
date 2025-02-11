@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:lpinyin/lpinyin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:qm/components/qm_input.dart';
-import 'package:qm/utils/index.dart' as utils;
-import 'package:qm/components/empty_widget.dart';
-import 'package:qm/components/button_widget.dart';
-import 'package:qm/components/sticky_positioned.dart';
+import 'package:qmnj/components/qm_input.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/components/empty_widget.dart';
+import 'package:qmnj/components/button_widget.dart';
+import 'package:qmnj/components/sticky_positioned.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 part 'render_display_node.g.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:qm/entity/driver_work_params.dart';
+import 'package:qmnj/entity/driver_work_params.dart';
 import 'package:get/get.dart';
 
 class ConnectDeviceModels extends GetxController {

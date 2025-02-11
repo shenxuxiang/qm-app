@@ -1,20 +1,19 @@
 import 'dart:io';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:qm/utils/index.dart';
-import 'package:qm/models/main.dart';
+import 'package:qmnj/utils/index.dart';
+import 'package:qmnj/models/main.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/common/base_page.dart';
-import 'package:qm/entity/work_type.dart';
-import 'package:qm/entity/crops_type.dart';
-import 'package:qm/components/button_widget.dart';
-import 'package:qm/entity/driver_work_params.dart';
-import 'package:qm/components/skeleton_screen.dart';
-import 'package:qm/models/connect_device_models.dart';
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/common/base_page.dart';
+import 'package:qmnj/entity/work_type.dart';
+import 'package:qmnj/entity/crops_type.dart';
+import 'package:qmnj/components/button_widget.dart';
+import 'package:qmnj/entity/driver_work_params.dart';
+import 'package:qmnj/components/skeleton_screen.dart';
+import 'package:qmnj/models/connect_device_models.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:qm/components/select_drive_work_Type.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qmnj/components/select_drive_work_Type.dart';
 
 class WorkTypePage extends BasePage {
   const WorkTypePage({super.key, required super.title});

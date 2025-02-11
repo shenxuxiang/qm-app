@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:qm/entity/work_type.dart';
-import 'package:qm/entity/crops_type.dart';
+import 'package:qmnj/entity/work_type.dart';
+import 'package:qmnj/entity/crops_type.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class DateType {

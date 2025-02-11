@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart' as utils;
+import 'package:qmnj/utils/index.dart' as utils;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SkeletonScreen extends StatefulWidget {
@@ -17,9 +17,9 @@ class SkeletonScreen extends StatefulWidget {
 }
 
 class _SkeletonScreenState extends State<SkeletonScreen> with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
-  late final Animation<double> _animation;
   final Color _darkColor = Color(0xFFEFEFEF);
+  AnimationController? _animationController;
+  Animation<double>? _animation;
   Timer? _timer;
 
   @override
@@ -27,8 +27,8 @@ class _SkeletonScreenState extends State<SkeletonScreen> with SingleTickerProvid
     _timer = Timer(Duration(milliseconds: 800), () {
       setState(() => _timer = null);
       _animationController = AnimationController(vsync: this, duration: const Duration(seconds: 3));
-      _animation = CurvedAnimation(parent: _animationController, curve: Curves.ease);
-      _animationController.repeat();
+      _animation = CurvedAnimation(parent: _animationController!, curve: Curves.ease);
+      _animationController?.repeat();
     });
 
     super.initState();
@@ -37,7 +37,7 @@ class _SkeletonScreenState extends State<SkeletonScreen> with SingleTickerProvid
   @override
   void dispose() {
     _timer?.cancel();
-    _animationController.dispose();
+    _animationController?.dispose();
     super.dispose();
   }
 
@@ -309,7 +309,7 @@ class _SkeletonScreenState extends State<SkeletonScreen> with SingleTickerProvid
                   ),
                 ),
                 AnimatedBuilder(
-                  animation: _animation,
+                  animation: _animation!,
                   builder: (BuildContext context, Widget? child) {
                     return Container(
                       decoration: BoxDecoration(
@@ -322,9 +322,9 @@ class _SkeletonScreenState extends State<SkeletonScreen> with SingleTickerProvid
                             Color(0x00FFFFFF),
                           ],
                           stops: [
-                            _animation.value - 0.12,
-                            _animation.value,
-                            _animation.value + 0.12,
+                            _animation!.value - 0.12,
+                            _animation!.value,
+                            _animation!.value + 0.12,
                           ],
                         ),
                       ),

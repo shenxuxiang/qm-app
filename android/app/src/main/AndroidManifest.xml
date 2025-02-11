@@ -19,9 +19,14 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--用于读取手机当前的状态-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-
+    <!--如果设置了target >= 28 如果需要启动后台定位则必须声明这个权限-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!--如果您的应用需要后台定位权限，且有可能运行在Android Q设备上,并且设置了target>28，必须增加这个权限声明-->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <!--允许写设备缓存，用于问题排查-->
+    <!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
+    <!--允许读设备等信息，用于问题排查-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 只能在支持BLE的Android设备上安装运行 -->
     <!--    <uses-feature-->
     <!--        android:name="android.hardware.bluetooth_le"-->
@@ -40,6 +45,9 @@
         android:name="android.permission.BLUETOOTH_ADMIN"
         android:maxSdkVersion="30" />
 
+    <!-- For Android 12+ -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <application
         android:label="阡陌农机"
@@ -57,6 +65,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+            <!--            android:appComponentFactory="androidx.core.app.CoreComponentFactory">-->
 
             <meta-data
                 android:name="com.amap.api.v2.apikey"

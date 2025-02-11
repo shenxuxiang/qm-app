@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:qm/models/main.dart';
+import 'package:qmnj/models/main.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart' as utils;
-import 'package:qm/components/cascader/index.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/components/cascader/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectCity extends StatelessWidget {

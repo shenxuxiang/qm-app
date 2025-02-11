@@ -1,6 +1,6 @@
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/qm_icons.dart';
+import 'package:qmnj/utils/qm_icons.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class QmInput extends StatefulWidget {

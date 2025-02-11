@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:qm/entity/work_type.dart';
-import 'package:qm/entity/crops_type.dart';
+import 'package:qmnj/entity/work_type.dart';
+import 'package:qmnj/entity/crops_type.dart';
 
 class MainModels extends GetxController {
   /// 用户信息

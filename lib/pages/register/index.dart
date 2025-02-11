@@ -1,16 +1,16 @@
 import 'package:get/get.dart';
 import 'components/input.dart';
-import 'package:qm/global_vars.dart';
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/global_vars.dart';
+import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/common/base_page.dart';
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/common/base_page.dart';
 import 'components/service_principal.dart';
-import 'package:qm/components/qm_checkbox.dart';
-import 'package:qm/components/button_widget.dart';
-import 'package:qm/components/cascader/index.dart';
+import 'package:qmnj/components/qm_checkbox.dart';
+import 'package:qmnj/components/button_widget.dart';
+import 'package:qmnj/components/cascader/index.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:qm/components/verification_code_button.dart';
+import 'package:qmnj/components/verification_code_button.dart';
 
 class RegisterPage extends BasePage {
   const RegisterPage({super.key, super.title});

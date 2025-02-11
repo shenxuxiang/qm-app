@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:amap_map/amap_map.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/common/base_page.dart';
-import 'package:qm/utils/index.dart' as utils;
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/common/base_page.dart';
 import 'package:x_amap_base/x_amap_base.dart';
-import 'package:qm/components/skeleton_screen.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/components/skeleton_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WorkDetail extends BasePage {

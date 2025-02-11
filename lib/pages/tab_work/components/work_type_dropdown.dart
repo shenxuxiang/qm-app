@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:qm/models/main.dart';
+import 'package:qmnj/models/main.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/entity/work_type.dart';
-import 'package:qm/utils/index.dart' as utils;
-import 'package:qm/components/dropdown_menu_button.dart';
+import 'package:qmnj/entity/work_type.dart';
+import 'package:qmnj/utils/index.dart' as utils;
+import 'package:qmnj/components/dropdown_menu_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WorkTypeDropdown extends StatefulWidget {

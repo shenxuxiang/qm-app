@@ -1,8 +1,8 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:qm/common/base_page.dart';
+import 'package:qmnj/common/base_page.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/utils/index.dart';
+import 'package:qmnj/utils/index.dart';
 import 'bluetooth_off_screen.dart';
 import 'package:get/get.dart';
 import 'scan_screen.dart';

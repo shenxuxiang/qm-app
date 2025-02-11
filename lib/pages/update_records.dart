@@ -1,13 +1,12 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:qm/api/main.dart' as api;
-import 'package:qm/common/base_page.dart';
-import 'package:qm/components/empty_widget.dart';
-import 'package:qm/components/skeleton_screen.dart';
-import 'package:qm/utils/index.dart' as utils;
+import 'package:qmnj/api/main.dart' as api;
+import 'package:qmnj/common/base_page.dart';
+import 'package:qmnj/utils/index.dart' as utils;
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:qm/components/expansion_panel.dart';
-import 'package:qm/components/easy_refresh_footer.dart';
+import 'package:qmnj/components/skeleton_screen.dart';
+import 'package:qmnj/components/expansion_panel.dart';
+import 'package:qmnj/components/easy_refresh_footer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UpdateRecords extends BasePage {
