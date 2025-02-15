@@ -11,4 +11,12 @@ class GlobalVars {
       r'^(?=.*\d+)(?=.*[a-zA-Z]+)(?=.*[.,?_`!@#$%^&*\-=+()\[\]{}]+)[.,?_`!@#$%^&*\-=+()\[\]{}0-9a-zA-Z]{6,18}');
 
   static RegExp phonePattern = RegExp(r'^1[345789][0-9]{9}$');
+
+  /// 天地图瓦片服务-影像底图
+  static String tiandituImg =
+      'https://t{s}.tianditu.gov.cn/img_w/wmts?tk=49e687be3d835676e4cd1f15a24c1aef&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=img&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
+
+  /// 天地图瓦片服务-影像注记
+  static String tiandituCia =
+      'https://t{s}.tianditu.gov.cn/cia_w/wmts?tk=49e687be3d835676e4cd1f15a24c1aef&SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=cia&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}';
 }

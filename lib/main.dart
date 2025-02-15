@@ -1,23 +1,16 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:qmnj/common/amap_config.dart';
-import 'package:flutter/rendering.dart';
-import 'package:amap_map/amap_map.dart';
 import 'package:flutter/material.dart';
 import 'package:qmnj/utils/index.dart';
 import 'package:qmnj/global_vars.dart';
+import 'package:flutter/services.dart';
 import 'package:qmnj/routes.dart';
 import 'package:get/get.dart';
-import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await userLocation.init();
   await storage.init();
-
-  /// 设置合规隐私接口，由于个人信息保护法的实施，
-  /// 从地图Flutter插件3.0.0开始增加了更新隐私合合规属性，请正确设置相关属性，否则会造成地图白屏等问题。
-  AMapInitializer.updatePrivacyAgree(AmapConfig.amapPrivacyStatement);
 
   /// 设置导航栏颜色为黑色、设置导航栏图标为浅色
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -91,7 +84,7 @@ class QmApp extends StatelessWidget {
         supportedLocales: [
           const Locale('en', 'US'), // 美国英语
           const Locale('zh', 'CN'), // 中文简体
-          //其他Locales
+          // 其他Locales
         ],
       ),
     );

@@ -12,6 +12,7 @@ class InputWidget extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final void Function(String value) onChanged;
+  final FocusNode? focusNode;
 
   // final SmartQuotesType? smartQuotesType;
   // final SmartDashesType? smartDashesType;
@@ -19,6 +20,7 @@ class InputWidget extends StatefulWidget {
 
   const InputWidget({
     super.key,
+    this.focusNode,
     this.prefix,
     this.suffix,
     this.placeholder,
@@ -90,6 +92,7 @@ class _InputWidgetState extends State<InputWidget> {
               autofocus: false,
               controller: _controller,
               cursorColor: Colors.blue,
+              focusNode: widget.focusNode,
               maxLength: widget.maxLength,
               obscureText: widget.obscureText,
               keyboardType: widget.keyboardType,

@@ -53,8 +53,10 @@
         android:label="阡陌农机"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-
         <service android:name="com.amap.api.location.APSService" />
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="9eb2423fb48ec22702d79b1b450443e5" />
 
         <activity
             android:name=".MainActivity"
@@ -65,11 +67,10 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!--            android:appComponentFactory="androidx.core.app.CoreComponentFactory">-->
 
-            <meta-data
-                android:name="com.amap.api.v2.apikey"
-                android:value="9eb2423fb48ec22702d79b1b450443e5" />
+            <!--            <meta-data-->
+            <!--                android:name="com.amap.api.v2.apikey"-->
+            <!--                android:value="9eb2423fb48ec22702d79b1b450443e5" />-->
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues

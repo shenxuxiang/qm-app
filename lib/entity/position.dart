@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'location_info.g.dart';
+part 'position.g.dart';
 
 @JsonSerializable()
-class LocationInfo {
+class Position {
   @JsonKey(name: 'locationTime')
   final String locationTime;
 
@@ -55,7 +55,7 @@ class LocationInfo {
   @JsonKey(name: 'description')
   final String description;
 
-  const LocationInfo({
+  const Position({
     required this.locationTime,
     required this.latitude,
     required this.longitude,
@@ -75,7 +75,7 @@ class LocationInfo {
     required this.description,
   });
 
-  factory LocationInfo.fromJson(Map<String, dynamic> json) => _$LocationInfoFromJson(json);
+  factory Position.fromJson(Map<String, dynamic> json) => _$PositionFromJson(json);
 
-  toJson() => _$LocationInfoToJson(this);
+  toJson() => _$PositionToJson(this);
 }

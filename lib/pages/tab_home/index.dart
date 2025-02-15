@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:qmnj/utils/index.dart';
 import 'package:flutter/material.dart';
-import 'package:amap_map/amap_map.dart';
+import 'package:qmnj/global_vars.dart';
 import 'package:qmnj/api/main.dart' as api;
-import 'package:x_amap_base/x_amap_base.dart';
-import 'package:qmnj/entity/location_info.dart';
+import 'package:qmnj/entity/position.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:qmnj/entity/driver_work_params.dart';
 import 'package:qmnj/models/connect_device_models.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:amap_flutter_base/amap_flutter_base.dart' as amapFlutterBase;
 
 class TabHome extends StatefulWidget {
   const TabHome({super.key});
@@ -20,71 +22,36 @@ class TabHome extends StatefulWidget {
 }
 
 class _TabHomeState extends State<TabHome> {
-  /// 倾斜度（范围从0到360度）、缩放级别（最大 20）、指向的方向（范围从0到360度）
-  final double _tilt = 10;
-  final double _zoom = 17.5;
-  final double _bearing = 0;
-  final GlobalKey _globalKey = GlobalKey();
+  final _mapController = MapController();
+
+  final double _zoom = 16.75;
+  final double _maxZoom = 18;
 
   /// 选择设备的特征
   BluetoothCharacteristic? _selectedCharacteristic;
 
-  /// 作业起点的标记
-  final _startPointMarkerIcon = BitmapDescriptor.fromIconPath('assets/images/start-point.png');
-
-  /// 定位蓝点的自定义 Icon
-  final _myLocationStyleOptionsIcon = BitmapDescriptor.fromIconPath('assets/images/location.png');
-
-  /// 定位蓝点
-  MyLocationStyleOptions? _myLocationStyleOptions;
-
   ///  停止监听用户定位
   UnListenUserLocation? _unListenUserLocation;
 
-  /// 初始坐标
-  CameraPosition? _initialPosition;
-
   /// 用户作业轨迹路线
-  Set<Polyline> _polyLineMaps = {};
+  List<Polyline> _polyLineMaps = [];
 
   /// mark 标记（只标记一个作业起点）
-  Set<Marker> _markerMaps = {};
+  List<Marker> _markerMaps = [];
 
   /// 作业轨迹（要发送给后端的）
   List<Map<String, dynamic>> _driverWorkTrace = [];
-
-  /// 地图控制器
-  AMapController? _mapController;
 
   /// 作业里程数（米）
   double _driverWorkMeter = 0;
 
   /// 获取用户的当前位置
   Future<void> getUserLocation() async {
-    LocationInfo? locationInfo = await userLocation.getUserLocation();
-    if (locationInfo != null) {
-      LatLng position = LatLng(locationInfo.latitude, locationInfo.longitude);
-
-      setState(() {
-        _initialPosition = CameraPosition(
-          zoom: _zoom,
-          tilt: _tilt,
-          target: position,
-          bearing: _bearing,
-        );
-        _mapController?.moveCamera(CameraUpdate.newCameraPosition(_initialPosition!));
-      });
+    Position? position = await userLocation.getUserLocation();
+    if (position != null && context.mounted) {
+      LatLng initialPosition = LatLng(position.latitude, position.longitude);
+      _mapController.move(initialPosition, _zoom);
     }
-  }
-
-  /// 地图创建成功的回调，更新 _mapController
-  _onMapCreated(AMapController controller) {
-    setState(() {
-      if (_initialPosition != null) {
-        controller.moveCamera(CameraUpdate.newCameraPosition(_initialPosition!));
-      }
-      _mapController = controller;
-    });
   }
 
   /// 开始作业
@@ -92,52 +59,54 @@ class _TabHomeState extends State<TabHome> {
     setState(() {
       /// 清空作业轨迹
       _driverWorkTrace = [];
-
-      /// 设置定位蓝点
-      _myLocationStyleOptions = MyLocationStyleOptions(
-        true,
-        icon: _myLocationStyleOptionsIcon,
-        circleFillColor: Colors.transparent,
-        circleStrokeColor: Colors.transparent,
-      );
     });
 
     /// 实时监听用户位置
-    _unListenUserLocation = userLocation.listenUserLocation((LocationInfo locationInfo) {
-      LatLng point = LatLng(locationInfo.latitude, locationInfo.longitude);
-      List<LatLng> points = _polyLineMaps.isNotEmpty ? List.of(_polyLineMaps.first.points) : [];
+    _unListenUserLocation = userLocation.listenUserLocation((Position? position) {
+      if (position == null) return;
 
-      /// 计算两个点之间的距离
-      final distance = points.isEmpty ? 0 : AMapTools.distanceBetween(points.last, point);
+      LatLng point = LatLng(position.latitude, position.longitude);
+      List<LatLng> points = _polyLineMaps.isNotEmpty ? _polyLineMaps.elementAt(0).points : [];
+
+      final distance = points.isEmpty
+          ? 0
+          : amapFlutterBase.AMapTools.distanceBetween(
+              amapFlutterBase.LatLng(points.last.latitude, points.last.longitude),
+              amapFlutterBase.LatLng(point.latitude, point.longitude),
+            );
+
+      /// 坐标过滤，如果相邻两个点位之间的间距大于 200 米，则认为这个点是无效的。
+      if (distance > 200) return;
 
       /// 更新用户轨迹线
       points.add(point);
 
       /// 添加作业轨迹
       _driverWorkTrace.add({
-        'latitude': locationInfo.latitude,
-        'longitude': locationInfo.longitude,
-        'createTime': locationInfo.locationTime,
+        'latitude': position.latitude,
+        'longitude': position.longitude,
+        'createTime': position.locationTime,
       });
-      Polyline polyline = _polyLineMaps.isNotEmpty
-          ? _polyLineMaps.first.copyWith(pointsParam: points)
-          : Polyline(
-              width: 6.w,
-              points: points,
-              capType: CapType.round,
-              color: Color(0xFFFF8800),
-            );
+      Polyline polyline = Polyline(
+        points: points,
+        strokeWidth: 6.w,
+        color: Color(0xFFFF8800),
+        strokeJoin: StrokeJoin.round,
+      );
 
+      /// 实时更新用户位置
+      _mapController.moveAndRotate(point, _zoom, 0);
       setState(() {
         // 地图上只展示起点 Marker，我们将开始监听获取的第一个点作为【作业起点】
         if (_markerMaps.isEmpty) {
-          _markerMaps = {Marker(position: point, icon: _startPointMarkerIcon!)};
+          _markerMaps = [Marker(point: point, child: Image.asset('assets/images/start-point.png'))];
+        } else if (_markerMaps.length < 2) {
+          _markerMaps.add(Marker(point: point, child: Image.asset('assets/images/location.png')));
+        } else {
+          _markerMaps.last = Marker(point: point, child: Image.asset('assets/images/location.png'));
         }
-        _polyLineMaps = {polyline};
 
-        /// 实时更新用户位置
-        _mapController?.moveCamera(CameraUpdate.newLatLng(point));
-
+        _polyLineMaps = [polyline];
         _driverWorkMeter += distance;
       });
     });
@@ -164,8 +133,6 @@ class _TabHomeState extends State<TabHome> {
         // 作业里程数
         _driverWorkMeter = 0;
         _unListenUserLocation = null;
-        // 隐藏定位蓝点
-        _myLocationStyleOptions = MyLocationStyleOptions(false);
       });
       Toast.show('作业已停止');
 
@@ -271,25 +238,41 @@ class _TabHomeState extends State<TabHome> {
   @override
   void dispose() {
     super.dispose();
+    _mapController.dispose();
+
+    /// 如果监听定位存在，则认为用户正在作业。此时需要关闭作业。
+    if (_unListenUserLocation != null) api.queryEndWork({'coordinates': _driverWorkTrace});
   }
 
   @override
   Widget build(BuildContext context) {
-    /// 需在 AMapWidget 使用前调用该方法。
-    AMapInitializer.init(context);
     return Scaffold(
       appBar: AppBar(title: Text('农机作业')),
       body: Stack(
         alignment: Alignment.center,
         children: [
           SizedBox.expand(
-            child: AMapWidget(
-              key: _globalKey,
-              markers: _markerMaps,
-              polylines: _polyLineMaps,
-              mapType: MapType.satellite,
-              onMapCreated: _onMapCreated,
-              myLocationStyleOptions: _myLocationStyleOptions,
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                crs: const Epsg3857(),
+                initialZoom: _zoom,
+                maxZoom: _maxZoom,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: GlobalVars.tiandituImg,
+                  subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                  userAgentPackageName: 'com.example.qmnj',
+                ),
+                TileLayer(
+                  urlTemplate: GlobalVars.tiandituCia,
+                  subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                  userAgentPackageName: 'com.example.qmnj',
+                ),
+                PolylineLayer(polylines: _polyLineMaps),
+                MarkerLayer(markers: _markerMaps),
+              ],
             ),
           ),
 
@@ -366,7 +349,9 @@ class _TabHomeState extends State<TabHome> {
                   );
                 },
               ),
-              onPressed: () => handleTapStartOrEndButton(context),
+              onPressed: () {
+                handleTapStartOrEndButton(context);
+              },
               child: const Placeholder(),
             ),
           ),

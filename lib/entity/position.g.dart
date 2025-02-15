@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'location_info.dart';
+part of 'position.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LocationInfo _$LocationInfoFromJson(Map<String, dynamic> json) => LocationInfo(
+Position _$PositionFromJson(Map<String, dynamic> json) => Position(
       locationTime: json['locationTime'] as String,
       latitude: (json['latitude'] as num).toDouble(),
       longitude: (json['longitude'] as num).toDouble(),
@@ -26,8 +26,7 @@ LocationInfo _$LocationInfoFromJson(Map<String, dynamic> json) => LocationInfo(
       description: json['description'] as String,
     );
 
-Map<String, dynamic> _$LocationInfoToJson(LocationInfo instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PositionToJson(Position instance) => <String, dynamic>{
       'locationTime': instance.locationTime,
       'altitude': instance.altitude,
       'longitude': instance.longitude,

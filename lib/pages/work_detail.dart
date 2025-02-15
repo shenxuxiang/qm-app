@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:amap_map/amap_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:qmnj/global_vars.dart';
 import 'package:qmnj/api/main.dart' as api;
 import 'package:qmnj/common/base_page.dart';
-import 'package:x_amap_base/x_amap_base.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:qmnj/utils/index.dart' as utils;
 import 'package:qmnj/components/skeleton_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +17,11 @@ class WorkDetail extends BasePage {
 }
 
 class _WorkDetailState extends BasePageState<WorkDetail> {
-  Map<String, dynamic> _resourceData = {};
+  final double _zoom = 16.75;
+  final double _maxZoom = 18;
   bool _isPageLoading = true;
+  LatLng _initialPosition = LatLng(0, 0);
+  Map<String, dynamic> _resourceData = {};
 
   final Map<String, String> _filterMaps = {
     '机手姓名': 'driver',
@@ -32,13 +36,14 @@ class _WorkDetailState extends BasePageState<WorkDetail> {
     '作业历程（公里）': 'mileage',
   };
 
-  Set<Marker> _markers = {};
-  Set<Polyline> _polyLines = {};
-  CameraPosition _initialCameraPosition = CameraPosition(target: LatLng(0, 0), zoom: 10);
+  List<Marker> _markers = [];
+  List<Polyline> _polyLines = [];
 
   @override
   initState() {
     api.queryDriveWorkDetail({'workId': Get.arguments}).then((resp) {
+      debugPrint('hello world=====');
+
       final data = resp.data;
       List<dynamic> features = data?['points']?['features'] ?? [];
 
@@ -51,22 +56,24 @@ class _WorkDetailState extends BasePageState<WorkDetail> {
       setState(() {
         _resourceData = data;
         _isPageLoading = false;
-        _initialCameraPosition = CameraPosition(target: points[0], zoom: 13);
-        _markers = {
+        _initialPosition = points[0];
+        _markers = [
           Marker(
-            position: points[0],
-            icon: BitmapDescriptor.fromIconPath('assets/images/start-point.png'),
-          )
-        };
-        _polyLines = {
+            point: points[0],
+            child: Image.asset('assets/images/start-point.png'),
+          ),
+        ];
+        _polyLines = [
           Polyline(
-            width: 6.w,
             points: points,
-            capType: CapType.round,
-            color: Color(0xFFFF4949),
+            strokeWidth: 6.w,
+            color: Color(0xFFFF8800),
+            strokeJoin: StrokeJoin.round,
           )
-        };
+        ];
       });
+    }).catchError((error) {
+      debugPrint('error: $error');
     });
 
     super.initState();
@@ -78,7 +85,6 @@ class _WorkDetailState extends BasePageState<WorkDetail> {
 
   @override
   Widget build(BuildContext context) {
-    AMapInitializer.init(context);
     if (_isPageLoading) return SkeletonScreen(title: '作业详情');
 
     return Scaffold(
@@ -90,11 +96,26 @@ class _WorkDetailState extends BasePageState<WorkDetail> {
         SizedBox(
           width: double.infinity,
           height: 300.w,
-          child: AMapWidget(
-            markers: _markers,
-            polylines: _polyLines,
-            mapType: MapType.satellite,
-            initialCameraPosition: _initialCameraPosition,
+          child: FlutterMap(
+            options: MapOptions(
+              maxZoom: _maxZoom,
+              initialZoom: _zoom,
+              initialCenter: _initialPosition,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: GlobalVars.tiandituImg,
+                subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                userAgentPackageName: 'com.example.qmnj',
+              ),
+              TileLayer(
+                urlTemplate: GlobalVars.tiandituCia,
+                subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                userAgentPackageName: 'com.example.qmnj',
+              ),
+              PolylineLayer(polylines: _polyLines),
+              MarkerLayer(markers: _markers),
+            ],
           ),
         ),
         Expanded(

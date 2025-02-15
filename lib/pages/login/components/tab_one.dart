@@ -24,6 +24,7 @@ class _TabOneState extends State<TabOne> {
   bool _checked = false;
   bool _disabled = true;
   String _verificationCode = '';
+  final _focusNodeOfVerificationCode = FocusNode();
 
   @override
   void initState() {
@@ -85,6 +86,7 @@ class _TabOneState extends State<TabOne> {
       Toast.show('请输入手机号码');
       throw Exception('手机号不能为空');
     }
+    _focusNodeOfVerificationCode.requestFocus();
     return api.queryVerificationCode({'type': '1', 'phone': _phone});
   }
 
@@ -110,6 +112,7 @@ class _TabOneState extends State<TabOne> {
           placeholder: '请输入验证码',
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.next,
+          focusNode: _focusNodeOfVerificationCode,
           onChanged: handleChangeVerificationCode,
           autofillHints: [AutofillHints.oneTimeCode],
           // 获取验证码按钮
