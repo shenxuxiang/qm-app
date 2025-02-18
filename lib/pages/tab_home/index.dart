@@ -11,8 +11,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:qmnj/entity/driver_work_params.dart';
 import 'package:qmnj/models/connect_device_models.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:qmnj/common/background_location_task.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:amap_flutter_base/amap_flutter_base.dart' as amapFlutterBase;
 
 class TabHome extends StatefulWidget {
   const TabHome({super.key});
@@ -22,10 +22,10 @@ class TabHome extends StatefulWidget {
 }
 
 class _TabHomeState extends State<TabHome> {
+  StreamSubscription<dynamic>? _backgroundTaskSubscription;
   final _mapController = MapController();
-
-  final double _zoom = 16.75;
-  final double _maxZoom = 18;
+  final double _zoom = 16.8;
+  final double _maxZoom = 18.5;
 
   /// 选择设备的特征
   BluetoothCharacteristic? _selectedCharacteristic;
@@ -39,11 +39,8 @@ class _TabHomeState extends State<TabHome> {
   /// mark 标记（只标记一个作业起点）
   List<Marker> _markerMaps = [];
 
-  /// 作业轨迹（要发送给后端的）
-  List<Map<String, dynamic>> _driverWorkTrace = [];
-
   /// 作业里程数（米）
-  double _driverWorkMeter = 0;
+  double _workMileage = 0;
 
   /// 获取用户的当前位置
   Future<void> getUserLocation() async {
@@ -55,49 +52,59 @@ class _TabHomeState extends State<TabHome> {
   }
 
   /// 开始作业
-  handleStartWork() {
-    setState(() {
-      /// 清空作业轨迹
-      _driverWorkTrace = [];
-    });
+  handleStartWork([bool clearTrace = true]) async {
+    if (clearTrace) {
+      /// 清空作业轨迹、作业里程
+      // await storage.reload();
+      await storage.remove('User-Driver-Work-Mileage');
+      await storage.remove('User-Driver-Work-Trace');
+    }
+
+    // await BackgroundLocationTask.start();
 
     /// 实时监听用户位置
-    _unListenUserLocation = userLocation.listenUserLocation((Position? position) {
-      if (position == null) return;
-
+    _unListenUserLocation = userLocation.listenUserLocation((Position position) async {
       LatLng point = LatLng(position.latitude, position.longitude);
-      List<LatLng> points = _polyLineMaps.isNotEmpty ? _polyLineMaps.elementAt(0).points : [];
 
-      final distance = points.isEmpty
-          ? 0
-          : amapFlutterBase.AMapTools.distanceBetween(
-              amapFlutterBase.LatLng(points.last.latitude, points.last.longitude),
-              amapFlutterBase.LatLng(point.latitude, point.longitude),
-            );
+      /// 更新后同步到主线程
+      // await storage.reload();
+      double workMileage = storage.getItem('User-Driver-Work-Mileage') ?? 0;
+      List<dynamic> workTrace = storage.getItem('User-Driver-Work-Trace') ?? [];
 
-      /// 坐标过滤，如果相邻两个点位之间的间距大于 200 米，则认为这个点是无效的。
-      if (distance > 200) return;
+      List<LatLng> points = workTrace.isNotEmpty
+          ? [for (final trace in workTrace) LatLng(trace['latitude'], trace['longitude'])]
+          : [];
+
+      if (workTrace.isNotEmpty) {
+        /// 算法过滤，通过时间、以及经纬度来过滤
+        final trace = workTrace.last;
+        final time1 = DateTime.parse(position.locationTime);
+        final time2 = DateTime.parse(trace['createTime']);
+
+        if (time1.compareTo(time2) <= 0) {
+          return;
+        } else if (trace['latitude'] == point.latitude && trace['longitude'] == point.longitude) {
+          return;
+        }
+
+        /// 累计作业里程
+        workMileage += getDistanceBetween(point, points.last);
+      }
 
       /// 更新用户轨迹线
       points.add(point);
-
-      /// 添加作业轨迹
-      _driverWorkTrace.add({
+      workTrace.add({
         'latitude': position.latitude,
         'longitude': position.longitude,
         'createTime': position.locationTime,
       });
-      Polyline polyline = Polyline(
-        points: points,
-        strokeWidth: 6.w,
-        color: Color(0xFFFF8800),
-        strokeJoin: StrokeJoin.round,
-      );
+      storage.setItem('User-Driver-Work-Trace', workTrace);
+      storage.setItem('User-Driver-Work-Mileage', workMileage);
 
       /// 实时更新用户位置
       _mapController.moveAndRotate(point, _zoom, 0);
       setState(() {
-        // 地图上只展示起点 Marker，我们将开始监听获取的第一个点作为【作业起点】
+        /// 地图上只展示起点 Marker，我们将开始监听获取的第一个点作为【作业起点】
         if (_markerMaps.isEmpty) {
           _markerMaps = [Marker(point: point, child: Image.asset('assets/images/start-point.png'))];
         } else if (_markerMaps.length < 2) {
@@ -106,24 +113,41 @@ class _TabHomeState extends State<TabHome> {
           _markerMaps.last = Marker(point: point, child: Image.asset('assets/images/location.png'));
         }
 
-        _polyLineMaps = [polyline];
-        _driverWorkMeter += distance;
+        /// 更新 Map 轨迹
+        _polyLineMaps = [
+          Polyline(
+            points: points,
+            strokeWidth: 6.w,
+            color: Color(0xFFFF8800),
+            strokeJoin: StrokeJoin.round,
+          )
+        ];
+
+        /// 更新 UI 界面作业里程
+        _workMileage = workMileage;
       });
     });
   }
 
   /// 结束作业
-  handleEndWork() async {
-    final isEndDriveWork = await showAlertDialog(title: '是否停止作业？');
+  handleEndWork([bool isConfirm = false]) async {
+    final isEndDriveWork = !isConfirm ? await showAlertDialog(title: '是否停止作业？') : true;
     if (isEndDriveWork != true) return;
     final connectDeviceModels = Get.find<ConnectDeviceModels>();
     try {
-      await api.queryEndWork({'coordinates': _driverWorkTrace});
+      // await BackgroundLocationTask.stop();
+      final workTrace = storage.getItem('User-Driver-Work-Trace') ?? [];
+      final workMileage = storage.getItem('User-Driver-Work-Mileage') ?? 0;
+
+      await api.queryEndWork({
+        'coordinates': workTrace,
+        'mileage': (workMileage / 1000).toStringAsFixed(2),
+      });
 
       /// 断开设备连接
       await connectDeviceModels.connectedDevice.value?.disconnect();
       // 取消监听用户定位
-      await _unListenUserLocation!();
+      if (_unListenUserLocation != null) await _unListenUserLocation!();
 
       setState(() {
         // 取消所有 Marker
@@ -131,7 +155,7 @@ class _TabHomeState extends State<TabHome> {
         // 取消所有 Polyline
         _polyLineMaps.clear();
         // 作业里程数
-        _driverWorkMeter = 0;
+        _workMileage = 0;
         _unListenUserLocation = null;
       });
       Toast.show('作业已停止');
@@ -160,8 +184,17 @@ class _TabHomeState extends State<TabHome> {
 
           /// result 不为空，则开始作业，否则取消用户行为。
           if (driverWorkParams != null) {
-            await api.queryDriverWork(driverWorkParams.toJson());
-            handleStartWork();
+            try {
+              await api.queryDriverWork(driverWorkParams.toJson());
+              await handleStartWork();
+            } on DioException catch (err) {
+              /// 500 表示之前有未结束的作业。
+              if (err.response!.data['code'] == 500) {
+                await api.queryEndWork({'coordinates': []});
+                await Future.delayed(Duration(milliseconds: 1500));
+                Toast.show('可以重新开始作业');
+              }
+            }
           }
         },
         onConfirm: () async {
@@ -176,7 +209,7 @@ class _TabHomeState extends State<TabHome> {
             await api.queryDriverWork(driverWorkParams.toJson());
 
             /// 如果连接的设备不为空，则开始作业。并对设备进行监听，实时读取设备的数据。
-            handleStartWork();
+            await handleStartWork();
             handleDiscoverService(connectedDevice);
           }
         },
@@ -228,20 +261,39 @@ class _TabHomeState extends State<TabHome> {
     }
   }
 
+  /// 监听后台任务
+  // listenBackgroundTask(dynamic data) {
+  //   debugPrint('收到通知了: $data');
+  //   BackgroundLocationTask.start();
+  // }
+
   @override
   void initState() {
     /// 获取用户的当前位置。
     getUserLocation();
     super.initState();
+    // BackgroundLocationTask.listen(listenBackgroundTask);
+    api.queryDriverWorkStatus({}).then((resp) async {
+      if (!resp.data) {
+        showAlertDialog(
+          title: '作业提示',
+          content: Text('用户当前存在一个未结束的作业，是否继续作业'),
+          onConfirm: () {
+            handleStartWork(false);
+          },
+          onCancel: () {
+            handleEndWork(true);
+          },
+        );
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     _mapController.dispose();
-
-    /// 如果监听定位存在，则认为用户正在作业。此时需要关闭作业。
-    if (_unListenUserLocation != null) api.queryEndWork({'coordinates': _driverWorkTrace});
+    // BackgroundLocationTask.remove(listenBackgroundTask);
   }
 
   @override
@@ -262,12 +314,12 @@ class _TabHomeState extends State<TabHome> {
               children: [
                 TileLayer(
                   urlTemplate: GlobalVars.tiandituImg,
-                  subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                  subdomains: GlobalVars.tiandituImgSubdomains,
                   userAgentPackageName: 'com.example.qmnj',
                 ),
                 TileLayer(
                   urlTemplate: GlobalVars.tiandituCia,
-                  subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                  subdomains: GlobalVars.tiandituCiaSubdomains,
                   userAgentPackageName: 'com.example.qmnj',
                 ),
                 PolylineLayer(polylines: _polyLineMaps),
@@ -302,7 +354,7 @@ class _TabHomeState extends State<TabHome> {
                           ),
                         ),
                         Text(
-                          (_driverWorkMeter / 1000).toStringAsFixed(3),
+                          (_workMileage / 1000).toStringAsFixed(2),
                           style: TextStyle(
                             height: 1.5,
                             fontSize: 24.w,

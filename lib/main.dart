@@ -1,5 +1,6 @@
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qmnj/common/background_location_task.dart';
 import 'package:flutter/material.dart';
 import 'package:qmnj/utils/index.dart';
 import 'package:qmnj/global_vars.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await BackgroundLocationTask.init();
   await userLocation.init();
   await storage.init();
 
@@ -20,8 +22,19 @@ void main() async {
   runApp(const QmApp());
 }
 
-class QmApp extends StatelessWidget {
+class QmApp extends StatefulWidget {
   const QmApp({super.key});
+
+  @override
+  State<QmApp> createState() => _QmAppState();
+}
+
+class _QmAppState extends State<QmApp> {
+  @override
+  void dispose() {
+    BackgroundLocationTask.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +77,12 @@ class QmApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff476bf3)),
         ),
         routingCallback: (Routing? routing) {
-          debugPrint('context: ${Get.context}');
-          debugPrint('args: ${routing?.args}');
-          debugPrint('route: ${routing?.route}');
-          debugPrint('isBack: ${routing?.isBack}');
-          debugPrint('isDialog: ${routing?.isDialog}');
-          debugPrint('isBottomSheet: ${routing?.isBottomSheet}');
+          // debugPrint('context: ${Get.context}');
+          // debugPrint('args: ${routing?.args}');
+          // debugPrint('route: ${routing?.route}');
+          // debugPrint('isBack: ${routing?.isBack}');
+          // debugPrint('isDialog: ${routing?.isDialog}');
+          // debugPrint('isBottomSheet: ${routing?.isBottomSheet}');
           final isBottomSheet = routing?.isBottomSheet ?? false;
           final isDialog = routing?.isDialog ?? false;
 

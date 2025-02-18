@@ -54,6 +54,16 @@ class Storage {
       return false;
     }
   }
+
+  Future<bool> reload() async {
+    assert(_storage != null);
+    try {
+      await _storage!.reload();
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
 }
 
 final storage = Storage();

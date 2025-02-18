@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:latlong2/latlong.dart';
+import 'package:amap_flutter_base/amap_flutter_base.dart' as amapFlutterBase;
 
 /// 截流函数
 T throttle<T extends Function>(T callback, Duration delay) {
@@ -56,4 +58,12 @@ formatDateTime(DateTime date, [String format = 'YYYY-MM-DD HH:mm:ss']) {
   string = string.replaceFirst(RegExp(r's+'), second);
 
   return string;
+}
+
+/// 获取两个点位之间的实际距离
+getDistanceBetween(LatLng position, LatLng prevPosition) {
+  return amapFlutterBase.AMapTools.distanceBetween(
+    amapFlutterBase.LatLng(position.latitude, position.longitude),
+    amapFlutterBase.LatLng(prevPosition.latitude, prevPosition.longitude),
+  );
 }

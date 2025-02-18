@@ -9,6 +9,7 @@ import 'package:qmnj/pages/work_detail.dart' show WorkDetail;
 import 'package:qmnj/pages/register/index.dart' show RegisterPage;
 import 'package:qmnj/pages/update_records.dart' show UpdateRecords;
 import 'package:qmnj/pages/connect_device/index.dart' show ConnectDevice;
+// import 'package:qmnj/pages/user_location.dart' show UserLocation;
 
 /// 全局依赖注入
 class GlobalDependenceBinding implements Bindings {
@@ -59,5 +60,9 @@ class Routes {
       name: '/work_detail',
       page: () => const WorkDetail(title: '作业详情'),
     ),
+    // GetPage(
+    //   name: '/user_position',
+    //   page: () => const UserLocation(title: '作业详情'),
+    // ),
   ];
 }

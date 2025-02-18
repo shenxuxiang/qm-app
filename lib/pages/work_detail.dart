@@ -17,8 +17,8 @@ class WorkDetail extends BasePage {
 }
 
 class _WorkDetailState extends BasePageState<WorkDetail> {
-  final double _zoom = 16.75;
-  final double _maxZoom = 18;
+  final double _zoom = 16.8;
+  final double _maxZoom = 18.5;
   bool _isPageLoading = true;
   LatLng _initialPosition = LatLng(0, 0);
   Map<String, dynamic> _resourceData = {};
@@ -105,12 +105,12 @@ class _WorkDetailState extends BasePageState<WorkDetail> {
             children: [
               TileLayer(
                 urlTemplate: GlobalVars.tiandituImg,
-                subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                subdomains: GlobalVars.tiandituImgSubdomains,
                 userAgentPackageName: 'com.example.qmnj',
               ),
               TileLayer(
                 urlTemplate: GlobalVars.tiandituCia,
-                subdomains: ['0', '1', '2', '3', '4', '5', '6', '7'],
+                subdomains: GlobalVars.tiandituCiaSubdomains,
                 userAgentPackageName: 'com.example.qmnj',
               ),
               PolylineLayer(polylines: _polyLines),

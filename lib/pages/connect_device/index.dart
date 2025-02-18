@@ -60,7 +60,7 @@ class _ConnectDeviceState extends BasePageState<ConnectDevice> {
       ),
 
       /// 蓝牙是否已经连接
-      body: _adapterState == null ? BluetoothOffScreen() : ScanScreen(),
+      body: _adapterState == BluetoothAdapterState.on ? ScanScreen() : BluetoothOffScreen(),
     );
   }
 }

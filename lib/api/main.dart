@@ -65,6 +65,11 @@ Future<ResponseData> queryEndWork(Map<String, dynamic>? query) async {
   return httpRequest.post('/v1.0/WorkOriginalTracePoint/add', data: query);
 }
 
+/// 查看是否有未结束的作业
+Future<ResponseData> queryDriverWorkStatus(Map<String, dynamic>? query) async {
+  return httpRequest.post('/v1.0/driverWork/getDriverStatus', data: query);
+}
+
 /// 获取 region
 Future<ResponseData> queryRegionList(Map<String, dynamic>? query) async {
   return httpRequest.post('/v1.0/chinaProvince/region', data: query);

@@ -107,7 +107,7 @@ class _AlertDialogWidgetState extends State<_AlertDialogWidget>
         children: [
           /// 遮罩层
           GestureDetector(
-            onTap: handleClose,
+            onTap: null,
             child: AnimatedBuilder(
               animation: _animation,
               builder: (BuildContext context, Widget? _) {
